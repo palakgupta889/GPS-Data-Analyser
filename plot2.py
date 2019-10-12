@@ -27,15 +27,6 @@ abs_files  = [ os.path.join(gpxdir , f ) for f in files ]
 
 # colour = ['r', 'g', 'b','c','k','m','w','y']
 colour = ['red', 'green', 'blue','cyan','black','magenta','white','yellow']
-    # b: blue.
-    # g: green.
-    # r: red.
-    # c: cyan.
-    # m: magenta.
-    # y: yellow.
-    # k: black.
-    # w: white.
-
 
 fig = plt.figure()
 abs_files = sorted(list(abs_files))
@@ -44,7 +35,8 @@ for file  in abs_files:
     for track in read_gpx_file(file):
         for i, segment in enumerate(track['segments']):
             fig = plot_map_colour_existing(track, segment, fig, (count+1)*(111), colour[count%8])
-            print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
+            print( colour[count%8] , " --------> ", track['name'][0] )
+            # print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
     count += 1
 
 save_map(fig, out)
