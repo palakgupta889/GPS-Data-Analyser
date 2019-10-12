@@ -392,17 +392,13 @@ def plot_map_colour(track, data, colour='red'):
 
 
 
-def plot_map_colour_existing(track, data, fig, colour='red'):
-    """Plot the elevation profile with heart rate annotations."""
-    # fig = plt.figure()
-    ax1 = fig.add_subplot(111)
+def plot_map_colour_existing(track, data, fig, label,colour='red'):
+    #ax1 = fig.add_subplot(111)
+    ax1 = fig.add_subplot( label )
     ax1.set_title('{}: {}'.format(track['name'][0], track['type'][0]))
     xdata = data['lon']
     ydata = data['lat']
-    #zdata = data[zcolor]
     cmap = get_cmap('viridis')
-    #norm = Normalize(vmin=floor(min(zdata)), vmax=ceil(max(zdata)))
-    #colors = [cmap(norm(i)) for i in zdata]
     for i, (xval, yval) in enumerate(zip(xdata, ydata)):
         try:
             ax1.plot([xval, xdata[i + 1]], [yval, ydata[i + 1]],
