@@ -12,14 +12,22 @@ import sys
 
 arguments = sys.argv[1:]
 count = len(arguments)
-# if( count < 1 ):
-# 	print( "Enter directory name as command line argument" );
-# 	exi
+# print( count  )
+if( count < 2 ):
+	print( "Format as below" )
+	print( "python3 file directory mapname" );
+	sys.exit(1);
 
-# dir = arguments[0]
-direc = "input"
-# out = arguments[1]
-out = "map.html"
+
+direc = arguments[0]
+# direc = "input"
+out = arguments[1]
+outhtml = out + "_map.html";
+outlegend = out + "_legend.txt"
+# out = "map.html"
+
+file_out = open( outlegend ,"w")
+
 my_path = os.path.abspath(os.path.dirname(__file__))
 gpxdir = os.path.join(my_path, direc )
 files = [f for f in listdir(gpxdir) if isfile(join(gpxdir, f))]
@@ -35,27 +43,10 @@ for file  in abs_files:
     for track in read_gpx_file(file):
         for i, segment in enumerate(track['segments']):
             fig = plot_map_colour_existing(track, segment, fig, (count+1)*(111), colour[count%8])
-            print( colour[count%8] , " --------> ", track['name'][0] )
+            # print( colour[count%8] , " --------> ", track['name'][0] )
+            file_out.write( str(colour[count%8]) + " --------> " +  str(track['name'][0])  + "\n")
             # print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
     count += 1
 
-save_map(fig, out)
-
-
-
-
-
-
-# for track in read_gpx_file(file3):
-#     for i, segment in enumerate(track['segments']):
-#         fig = plot_map_colour_existing(track, segment, fig, colour[i])
-
-# # for track in read_gpx_file(file3):
-# #     for i, segment in enumerate(track['segments']):
-# #         if( i == 0 ):
-# #             fig = plot_map_colour(track, segment, colour[i])
-# #         else:
-# #             fig = plot_map_colour_existing(track, segment, fig, colour[i])
-
-# save_map(fig, 'map0.html')
-
+save_map(fig, outhtml)
+file_out.close()
