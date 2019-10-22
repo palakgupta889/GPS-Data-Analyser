@@ -57,7 +57,9 @@ for file  in abs_files:
             file_out.write( "Stats: "+ "\n")
             file_out.write( "Total uphill : " + str(total_uphill) + " m"  + "\n")
             file_out.write( "Total downhill : " + str(total_downhill) + " m"  + "\n")
-            
+            file_out.write( "Total distance : " + str(total_distance) + " Km"  + "\n")
+            file_out.write( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) + "\n")
+            file_out.write( "Speed : " + str(speed) + " Km/hr"  + "\n\n\n")
             # print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
     count += 1
 
