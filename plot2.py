@@ -9,6 +9,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 import sys
+from math import sqrt, floor
 
 arguments = sys.argv[1:]
 count = len(arguments)
@@ -42,9 +43,17 @@ count  = 0
 for file  in abs_files:
     for track in read_gpx_file(file):
         for i, segment in enumerate(track['segments']):
+            total_uphill = round(segment['ele-up'],2)
+            total_downhill = round(segment['ele-down'],2)
+            
+            
             fig = plot_map_colour_existing(track, segment, fig, (count+1)*(111), colour[count%8])
             # print( colour[count%8] , " --------> ", track['name'][0] )
             file_out.write( str(colour[count%8]) + " --------> " +  str(track['name'][0])  + "\n")
+            file_out.write( "Stats: "+ "\n")
+            file_out.write( "Total uphill : " + str(total_uphill) + " m"  + "\n")
+            file_out.write( "Total downhill : " + str(total_downhill) + " m"  + "\n")
+            
             # print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
     count += 1
 
