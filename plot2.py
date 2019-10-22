@@ -45,7 +45,11 @@ for file  in abs_files:
         for i, segment in enumerate(track['segments']):
             total_uphill = round(segment['ele-up'],2)
             total_downhill = round(segment['ele-down'],2)
-            
+            total_distance = round(segment['distance'][-1]/1000,2)
+            time = segment['delta-seconds'][-1]
+            total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
+            #print('Total Time : ', floor(segment['delta-seconds'][-1]/60),' min ', int(segment['delta-seconds'][-1]%60),' sec ')
+            speed = round(total_distance/total_time_seconds,2)
             
             fig = plot_map_colour_existing(track, segment, fig, (count+1)*(111), colour[count%8])
             # print( colour[count%8] , " --------> ", track['name'][0] )
