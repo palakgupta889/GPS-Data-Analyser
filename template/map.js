@@ -1,15 +1,3 @@
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
-  <style>
-    #map3034e472a0244328ab8b7ead83e02dcc {
-      height:100%;
-    }
-  </style> 
-</head>
-<body>
-  <div id="map3034e472a0244328ab8b7ead83e02dcc"></div>
-<script text="text/javascript">
 var map = L.map('map3034e472a0244328ab8b7ead83e02dcc');
 L.tileLayer(
   "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -35,5 +23,3 @@ if (gjData.features.length != 0) {
 } else {
   map.setView([0, 0], 1);
 }
-</script>
-</body>
