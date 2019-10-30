@@ -82,3 +82,13 @@ fp.close()
 
 os.system("awk 'NR>=13 && NR<=37' " + outhtml + " > map.js" )
 os.system("sed -i 's/newmapvalue/"+mapid+"/g' " + outsplit )
+
+
+
+
+
+# open custom html only : currently : outsplit
+import webbrowser
+fullpath = os.getcwd()
+newfullpath = os.path.join(fullpath , outsplit)
+webbrowser.open('file://' + newfullpath)

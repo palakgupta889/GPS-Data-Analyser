@@ -29,6 +29,7 @@ outhtml = out + "_map.html";
 outlegend = out + "_legend.txt"
 
 outsplit = out + "_split.html"
+outsplit2 = out + "_split2.html"
 # out = "map.html"
 
 #file_out = open( outlegend ,"w")
@@ -123,5 +124,14 @@ for file  in abs_files:
 			mydivs.append(soup.new_tag('br'))
 	count += 1
 
-with open("output1.html", "w") as file:
+
+with open(outsplit2, "w") as file:
     file.write(str(soup))
+
+
+
+# open custom html only : currently : outsplit
+import webbrowser
+fullpath = os.getcwd()
+newfullpath = os.path.join(fullpath , outsplit2)
+webbrowser.open('file://' + newfullpath)

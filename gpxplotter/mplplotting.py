@@ -447,10 +447,31 @@ def plot_map_zones(track, data):
     fig.tight_layout()
     return fig
 
+def myshow(fig=None, path='_map.html', **kwargs):
+    """
+    Convert a Matplotlib Figure to a Leaflet map. Open in a browser
+
+    Parameters
+    ----------
+    fig : figure, default gcf()
+        Figure used to convert to map
+    path : string, default '_map.html'
+        Filename where output html will be saved
+
+    See fig_to_html() for description of keyword args.
+
+    """
+    import webbrowser
+    import os
+    fullpath = os.path.abspath(path)
+    with open(fullpath, 'w') as f:
+        mplleaflet.save_html(fig, fileobj=f, **kwargs)
+    # webbrowser.open('file://' + fullpath)
 
 def save_map(fig, name, tile='osm'):
     """Just store a map."""
-    mplleaflet.show(path=name, fig=fig, tiles=tile)
+    myshow(path=name, fig=fig, tiles=tile)
+    # mplleaflet.show(path=name, fig=fig, tiles=tile)
 
 
 #monkey_patch_tiles(tiles)
