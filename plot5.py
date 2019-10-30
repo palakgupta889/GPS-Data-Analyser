@@ -31,7 +31,7 @@ outlegend = out + "_legend.txt"
 outsplit = out + "_split.html"
 # out = "map.html"
 
-file_out = open( outlegend ,"w")
+#file_out = open( outlegend ,"w")
 
 my_path = os.path.abspath(os.path.dirname(__file__))
 gpxdir = os.path.join(my_path, direc )
@@ -44,31 +44,32 @@ colour = ['red', 'green', 'blue','cyan','black','magenta','white','yellow']
 fig = plt.figure()
 abs_files = sorted(list(abs_files))
 count  = 0 
+
 for file  in abs_files:
     for track in read_gpx_file(file):
         for i, segment in enumerate(track['segments']):
-            total_uphill = round(segment['ele-up'],2)
-            total_downhill = round(segment['ele-down'],2)
-            total_distance = round(segment['distance'][-1]/1000,2)
-            time = segment['delta-seconds'][-1]
-            total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
+            #total_uphill = round(segment['ele-up'],2)
+            #total_downhill = round(segment['ele-down'],2)
+            #total_distance = round(segment['distance'][-1]/1000,2)
+            #time = segment['delta-seconds'][-1]
+            #total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
             #print('Total Time : ', floor(segment['delta-seconds'][-1]/60),' min ', int(segment['delta-seconds'][-1]%60),' sec ')
-            speed = round(total_distance/total_time_seconds,2)
+            #speed = round(total_distance/total_time_seconds,2)
             
             fig = plot_map_colour_existing(track, segment, fig, (count+1)*(111), colour[count%8])
             # print( colour[count%8] , " --------> ", track['name'][0] )
-            file_out.write( str(colour[count%8]) + " --------> " +  str(track['name'][0])  + "\n")
-            file_out.write( "Stats: "+ "\n")
-            file_out.write( "Total uphill : " + str(total_uphill) + " m"  + "\n")
-            file_out.write( "Total downhill : " + str(total_downhill) + " m"  + "\n")
-            file_out.write( "Total distance : " + str(total_distance) + " Km"  + "\n")
-            file_out.write( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) + "\n")
-            file_out.write( "Speed : " + str(speed) + " Km/hr"  + "\n\n\n")
+            #file_out.write( str(colour[count%8]) + " --------> " +  str(track['name'][0])  + "\n")
+            #file_out.write( "Stats: "+ "\n")
+            #file_out.write( "Total uphill : " + str(total_uphill) + " m"  + "\n")
+            #file_out.write( "Total downhill : " + str(total_downhill) + " m"  + "\n")
+            #file_out.write( "Total distance : " + str(total_distance) + " Km"  + "\n")
+            #file_out.write( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) + "\n")
+            #file_out.write( "Speed : " + str(speed) + " Km/hr"  + "\n\n\n")
             # print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
     count += 1
 
 save_map(fig, outhtml)
-file_out.close()
+#file_out.close()
 
 
 
@@ -90,4 +91,38 @@ soup = Soup(open(outsplit), "html.parser")
 
 mydivs = soup.find("div", {"id": "legend"})
 
-print(soup)
+new_tag = soup.new_tag("br")
+
+count = 0
+for file  in abs_files:
+    for track in read_gpx_file(file):
+        for i, segment in enumerate(track['segments']):
+            total_uphill = round(segment['ele-up'],2)
+            total_downhill = round(segment['ele-down'],2)
+            total_distance = round(segment['distance'][-1]/1000,2)
+            time = segment['delta-seconds'][-1]
+            total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
+            #print('Total Time : ', floor(segment['delta-seconds'][-1]/60),' min ', int(segment['delta-seconds'][-1]%60),' sec ')
+            speed = round(total_distance/total_time_seconds,2)
+            
+            #fig = plot_map_colour_existing(track, segment, fig, (count+1)*(111), colour[count%8])
+            # print( colour[count%8] , " --------> ", track['name'][0] )
+            mydivs.append( str(colour[count%8]) + " --------> " +  str(track['name'][0]))
+            mydivs.append(new_tag)
+            mydivs.append( "Stats: "+ "\n")
+            mydivs.append(new_tag)
+            mydivs.append( "Total uphill : " + str(total_uphill) + " m")
+            mydivs.append(new_tag)
+            mydivs.append( "Total downhill : " + str(total_downhill) + " m")
+            mydivs.append(new_tag)
+            mydivs.append( "Total distance : " + str(total_distance) + " Km" )
+            mydivs.append(new_tag)
+            mydivs.append( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) )
+            mydivs.append(new_tag)
+            mydivs.append( "Speed : " + str(speed) + " Km/hr")
+            mydivs.append(new_tag)
+            # print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
+    count += 1
+
+with open("output1.html", "w") as file:
+    file.write(str(soup))
