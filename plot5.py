@@ -126,3 +126,116 @@ import webbrowser
 fullpath = os.getcwd()
 newfullpath = os.path.join(fullpath , outsplit2)
 webbrowser.open('file://' + newfullpath)
+
+
+
+
+from boundingbox import GeoLocation
+
+# lat="31.7620270" lon="76.9888490
+# 31.7595160" lon="77.0000430
+
+print("Enter 1st point latituted")
+lat1 = 31.7620270
+print("Enter 1st point longitude")
+lon1 = 76.9888490
+print("Enter 2nd point latituted")
+lat2 = 31.7595160
+print("Enter 2nd point longitude")
+lon2 = 77.0000430
+
+loc1 = GeoLocation.from_degrees(lat1, lon1)
+distance = 0.005  # 1 kilometer
+SW_loc1, NE_loc1 = loc1.bounding_locations(distance)
+
+lat1_ub = NE_loc1.deg_lat
+lat1_lb = SW_loc1.deg_lat
+lon1_ub = NE_loc1.deg_lon
+lon1_lb = SW_loc1.deg_lon
+
+loc2 = GeoLocation.from_degrees(lat2, lon2)
+distance = 0.01  # 1 kilometer
+SW_loc2, NE_loc2 = loc2.bounding_locations(distance)
+
+lat2_ub = NE_loc2.deg_lat
+lat2_lb = SW_loc2.deg_lat
+lon2_ub = NE_loc2.deg_lon
+lon2_lb = SW_loc2.deg_lon
+
+
+# print( NE_loc )
+# print( SW_loc )
+
+# print( lat1_ub , lon1_ub , lat1_lb , lon1_lb )
+# print( lat2_ub , lon2_ub , lat2_lb , lon2_lb )
+
+rides = []
+
+for file  in abs_files:
+    for track in read_gpx_file(file):
+        for k, segment in enumerate(track['segments']):
+            # print( "in for loop" )
+            lat = segment['lat']
+            lon = segment['lon']
+            flagStart = 0
+            flagEnd = 0
+            # for i in range ( 0 ,np.size(lat) ):
+            #     print(lat[i] , lon[i])
+            #     if( lat[i] == lat1 and lon[i] == lon1):
+            #         print("helll yeah")
+            for i in range ( 0 ,np.size(lat) ):
+                if( lat[i] <= lat1_ub and lat[i] >= lat1_lb and lon[i] <= lon1_ub and lon[i] >= lon1_lb ):
+                    flagStart = 1
+                    startInd = i
+                    # print("start found")
+                    break
+            if( flagStart == 0 ):
+                continue
+            for j in range (i,np.size(lat)):
+                if( lat[j] <= lat2_ub and lat[j] >= lat2_lb and lon[j] <= lon2_ub and lon[j] >= lon2_lb ):
+                    flagEnd = 1
+                    endInd = j
+                    break
+            if( flagEnd == 0 ):
+                continue
+
+            newTrack = [startInd , endInd , segment, track['name'][0]]
+            rides.append( newTrack )
+
+
+
+print( "\n\ncommon segment found in " , len(rides) , " rides" )
+
+finalList = []
+
+for i , newTrack in enumerate(rides):
+    startInd = newTrack[0]
+    endInd = newTrack [1]
+    trackName = newTrack[3]
+    data = newTrack[2]
+
+    distance = data['distance'][endInd] - data['distance'][startInd]
+    distance = round(distance / 1000,3)
+    time = data['delta-seconds'][endInd] - data['delta-seconds'][startInd]
+    time = round(time / 3600,3)
+    speed = round(distance/time,3)
+
+    elevation = data['ele'][startInd:endInd+1]
+    # print( len(elevation) )
+    ele_diff = np.diff(elevation)
+    eleup = round(ele_diff[np.where(ele_diff > 0)[0]].sum(),3)
+    eledown = round(ele_diff[np.where(ele_diff < 0)[0]].sum(),3)
+
+    print("\n\n", i+1,". ", trackName)
+    print( "dist = ", distance )
+    print( "time = ", time )
+    print( "speed = ", speed )
+    print( "eleup = ", eleup )
+    print( "eledown = ", eledown )
+
+    # print(distance, time, speed , eleup , eledown)
+    # print( trackName )
+
+    lst = [trackName , distance , time , speed, eleup , eledown ]
+
+    finalList.append(lst)
