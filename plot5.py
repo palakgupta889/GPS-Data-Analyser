@@ -89,40 +89,39 @@ os.system("sed -i 's/newmapvalue/"+mapid+"/g' " + outsplit )
 
 soup = Soup(open(outsplit), "html.parser")
 
-mydivs = soup.find("div", {"id": "legend"})
-
-new_tag = soup.new_tag("br")
+maindiv = soup.find("div", {"id": "legend"})
 
 count = 0
+
 for file  in abs_files:
-    for track in read_gpx_file(file):
-        for i, segment in enumerate(track['segments']):
-            total_uphill = round(segment['ele-up'],2)
-            total_downhill = round(segment['ele-down'],2)
-            total_distance = round(segment['distance'][-1]/1000,2)
-            time = segment['delta-seconds'][-1]
-            total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
-            #print('Total Time : ', floor(segment['delta-seconds'][-1]/60),' min ', int(segment['delta-seconds'][-1]%60),' sec ')
-            speed = round(total_distance/total_time_seconds,2)
-            
-            #fig = plot_map_colour_existing(track, segment, fig, (count+1)*(111), colour[count%8])
-            # print( colour[count%8] , " --------> ", track['name'][0] )
-            mydivs.append( str(colour[count%8]) + " --------> " +  str(track['name'][0]))
-            mydivs.append(new_tag)
-            mydivs.append( "Stats: "+ "\n")
-            mydivs.append(new_tag)
-            mydivs.append( "Total uphill : " + str(total_uphill) + " m")
-            mydivs.append(new_tag)
-            mydivs.append( "Total downhill : " + str(total_downhill) + " m")
-            mydivs.append(new_tag)
-            mydivs.append( "Total distance : " + str(total_distance) + " Km" )
-            mydivs.append(new_tag)
-            mydivs.append( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) )
-            mydivs.append(new_tag)
-            mydivs.append( "Speed : " + str(speed) + " Km/hr")
-            mydivs.append(new_tag)
-            # print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
-    count += 1
+	for track in read_gpx_file(file):
+		for i, segment in enumerate(track['segments']):
+			maindiv.append(soup.new_tag("div", id = "new_ride" + str(count)))
+
+			mydivs = soup.find("div", {"id": "new_ride" + str(count)})
+
+			total_uphill = round(segment['ele-up'],2)
+			total_downhill = round(segment['ele-down'],2)
+			total_distance = round(segment['distance'][-1]/1000,2)
+			time = segment['delta-seconds'][-1]
+			total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
+			speed = round(total_distance/total_time_seconds,2)
+			mydivs.append( str(colour[count%8]) + " --------> " +  str(track['name'][0]))
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Stats: ")
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Total uphill : " + str(total_uphill) + " m" )
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Total downhill : " + str(total_downhill) + " m")
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Total distance : " + str(total_distance) + " Km" )
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) )
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Speed : " + str(speed) + " Km/hr")
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append(soup.new_tag('br'))
+	count += 1
 
 with open("output1.html", "w") as file:
     file.write(str(soup))
