@@ -48,25 +48,8 @@ count  = 0
 
 for file  in abs_files:
     for track in read_gpx_file(file):
-        for i, segment in enumerate(track['segments']):
-            #total_uphill = round(segment['ele-up'],2)
-            #total_downhill = round(segment['ele-down'],2)
-            #total_distance = round(segment['distance'][-1]/1000,2)
-            #time = segment['delta-seconds'][-1]
-            #total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
-            #print('Total Time : ', floor(segment['delta-seconds'][-1]/60),' min ', int(segment['delta-seconds'][-1]%60),' sec ')
-            #speed = round(total_distance/total_time_seconds,2)
-            
+        for i, segment in enumerate(track['segments']):            
             fig = plot_map_colour_existing(track, segment, fig, (count+1)*(111), colour[count%8])
-            # print( colour[count%8] , " --------> ", track['name'][0] )
-            #file_out.write( str(colour[count%8]) + " --------> " +  str(track['name'][0])  + "\n")
-            #file_out.write( "Stats: "+ "\n")
-            #file_out.write( "Total uphill : " + str(total_uphill) + " m"  + "\n")
-            #file_out.write( "Total downhill : " + str(total_downhill) + " m"  + "\n")
-            #file_out.write( "Total distance : " + str(total_distance) + " Km"  + "\n")
-            #file_out.write( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) + "\n")
-            #file_out.write( "Speed : " + str(speed) + " Km/hr"  + "\n\n\n")
-            # print( file.split('/')[-1] , " ---- ",   colour[count%8] , " --------> ", track['name'][0] )
     count += 1
 
 save_map(fig, outhtml)
@@ -91,23 +74,31 @@ os.system("sed -i 's/newmapvalue/"+mapid+"/g' " + outsplit )
 soup = Soup(open(outsplit), "html.parser")
 
 maindiv = soup.find("div", {"id": "legend"})
-
+tot = count - 1
 count = 0
 
 for file  in abs_files:
 	for track in read_gpx_file(file):
 		for i, segment in enumerate(track['segments']):
-			maindiv.append(soup.new_tag("div", id = "new_ride" + str(count)))
-
+			if(count == 0 and tot ==2):
+				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:300px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
+			elif(count == 0 and tot ==3):
+				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:700px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
+			elif(count == 0 and tot ==4):
+				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:900px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
+			else:
+				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "padding-top:5px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))				
 			mydivs = soup.find("div", {"id": "new_ride" + str(count)})
-
+			
 			total_uphill = round(segment['ele-up'],2)
 			total_downhill = round(segment['ele-down'],2)
 			total_distance = round(segment['distance'][-1]/1000,2)
 			time = segment['delta-seconds'][-1]
 			total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
 			speed = round(total_distance/total_time_seconds,2)
-			mydivs.append( str(colour[count%8]) + " --------> " +  str(track['name'][0]))
+			mydivs.append(soup.new_tag("button", style = "height: 75px; width: 75px; background: " + str(colour[count%8])))
+			#mydivs.append( str(colour[count%8]) + " --------> " +  str(track['name'][0]))
+			mydivs.append( "  "+ str(track['name'][0]))
 			mydivs.append(soup.new_tag('br'))
 			mydivs.append( "Stats: ")
 			mydivs.append(soup.new_tag('br'))
