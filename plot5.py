@@ -10,9 +10,10 @@ from os import listdir
 from os.path import isfile, join
 import sys
 from math import sqrt, floor
-
 from bs4 import BeautifulSoup as Soup
+from boundingbox import GeoLocation
 
+########## FEW CONSTANTS ############ 
 arguments = sys.argv[1:]
 count = len(arguments)
 # print( count  )
@@ -31,6 +32,9 @@ outlegend = out + "_legend.txt"
 outsplit = out + "_split.html"
 outsplit2 = out + "_split2.html"
 # out = "map.html"
+infile = "coordinates.txt"
+fp = open( infile ,"r")
+
 
 #file_out = open( outlegend ,"w")
 
@@ -46,6 +50,9 @@ fig = plt.figure()
 abs_files = sorted(list(abs_files))
 count  = 0 
 
+
+########## READ GPX ############
+
 for file  in abs_files:
     for track in read_gpx_file(file):
         for i, segment in enumerate(track['segments']):            
@@ -56,93 +63,17 @@ save_map(fig, outhtml)
 #file_out.close()
 
 
-
-os.system( "rm " + outsplit )
-os.system( "rm map.js ")
-os.system( "cp ./template/split.html " + outsplit )
-
-fp = open( outhtml )
-for i, line in enumerate(fp):
-    if i == 10:
-        mapid = line.split("\"")[1]
-        break
-fp.close()
-
-os.system("awk 'NR>=13 && NR<=37' " + outhtml + " > map.js" )
-os.system("sed -i 's/newmapvalue/"+mapid+"/g' " + outsplit )
-
-soup = Soup(open(outsplit), "html.parser")
-
-maindiv = soup.find("div", {"id": "legend"})
-tot = count - 1
-count = 0
-
-for file  in abs_files:
-	for track in read_gpx_file(file):
-		for i, segment in enumerate(track['segments']):
-			if(count == 0 and tot ==2):
-				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:300px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
-			elif(count == 0 and tot ==3):
-				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:700px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
-			elif(count == 0 and tot ==4):
-				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:900px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
-			else:
-				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "padding-top:5px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))				
-			mydivs = soup.find("div", {"id": "new_ride" + str(count)})
-			
-			total_uphill = round(segment['ele-up'],2)
-			total_downhill = round(segment['ele-down'],2)
-			total_distance = round(segment['distance'][-1]/1000,2)
-			time = segment['delta-seconds'][-1]
-			total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
-			speed = round(total_distance/total_time_seconds,2)
-			mydivs.append(soup.new_tag("button", style = "height: 75px; width: 75px; background: " + str(colour[count%8])))
-			#mydivs.append( str(colour[count%8]) + " --------> " +  str(track['name'][0]))
-			mydivs.append( "  "+ str(track['name'][0]))
-			mydivs.append(soup.new_tag('br'))
-			mydivs.append( "Stats: ")
-			mydivs.append(soup.new_tag('br'))
-			mydivs.append( "Total uphill : " + str(total_uphill) + " m" )
-			mydivs.append(soup.new_tag('br'))
-			mydivs.append( "Total downhill : " + str(total_downhill) + " m")
-			mydivs.append(soup.new_tag('br'))
-			mydivs.append( "Total distance : " + str(total_distance) + " Km" )
-			mydivs.append(soup.new_tag('br'))
-			mydivs.append( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) )
-			mydivs.append(soup.new_tag('br'))
-			mydivs.append( "Speed : " + str(speed) + " Km/hr")
-			mydivs.append(soup.new_tag('br'))
-			mydivs.append(soup.new_tag('br'))
-	count += 1
-
-
-with open(outsplit2, "w") as file:
-    file.write(str(soup))
-
-
-
-# open custom html only : currently : outsplit
-import webbrowser
-fullpath = os.getcwd()
-newfullpath = os.path.join(fullpath , outsplit2)
-webbrowser.open('file://' + newfullpath)
-
-
-
-
-from boundingbox import GeoLocation
-
 # lat="31.7620270" lon="76.9888490
 # 31.7595160" lon="77.0000430
 
-print("Enter 1st point latituted")
-lat1 = 31.7620270
-print("Enter 1st point longitude")
-lon1 = 76.9888490
-print("Enter 2nd point latituted")
-lat2 = 31.7595160
-print("Enter 2nd point longitude")
-lon2 = 77.0000430
+# print("Enter 1st point latituted")
+lat1 = float(fp.readline())
+# print("Enter 1st point longitude")
+lon1 = float(fp.readline())
+# print("Enter 2nd point latituted")
+lat2 = float(fp.readline())
+# print("Enter 2nd point longitude")
+lon2 = float(fp.readline())
 
 loc1 = GeoLocation.from_degrees(lat1, lon1)
 distance = 0.005  # 1 kilometer
@@ -202,8 +133,6 @@ for file  in abs_files:
             newTrack = [startInd , endInd , segment, track['name'][0]]
             rides.append( newTrack )
 
-
-
 print( "\n\ncommon segment found in " , len(rides) , " rides" )
 
 finalList = []
@@ -217,8 +146,8 @@ for i , newTrack in enumerate(rides):
     distance = data['distance'][endInd] - data['distance'][startInd]
     distance = round(distance / 1000,3)
     time = data['delta-seconds'][endInd] - data['delta-seconds'][startInd]
-    time = round(time / 3600,3)
-    speed = round(distance/time,3)
+    # time = round(time / 3600,3)
+    speed = round(distance*3600/time,3)
 
     elevation = data['ele'][startInd:endInd+1]
     # print( len(elevation) )
@@ -227,15 +156,93 @@ for i , newTrack in enumerate(rides):
     eledown = round(ele_diff[np.where(ele_diff < 0)[0]].sum(),3)
 
     print("\n\n", i+1,". ", trackName)
-    print( "dist = ", distance )
-    print( "time = ", time )
-    print( "speed = ", speed )
-    print( "eleup = ", eleup )
-    print( "eledown = ", eledown )
-
+    print( "dist = ", distance , " km" )
+    print( "time = ",  int(time/3600), ":" , int((time%3600)/60) , ":" , int(time%60) )
+    print( "speed = ", speed, " km/hr" )
+    print( "eleup = ", eleup , " m" )
+    print( "eledown = ", -eledown , " m")
     # print(distance, time, speed , eleup , eledown)
     # print( trackName )
 
     lst = [trackName , distance , time , speed, eleup , eledown ]
 
     finalList.append(lst)
+
+
+os.system( "rm " + outsplit )
+os.system( "rm map.js ")
+os.system( "cp ./template/split.html " + outsplit )
+
+fp = open( outhtml )
+for i, line in enumerate(fp):
+    if i == 10:
+        mapid = line.split("\"")[1]
+        break
+fp.close()
+
+#segment calculation done
+
+########## Copying map to half map
+
+os.system("awk 'NR>=13 && NR<=37' " + outhtml + " > map.js" )
+os.system("sed -i 's/newmapvalue/"+mapid+"/g' " + outsplit )
+
+#### original rides data
+
+soup = Soup(open(outsplit), "html.parser")
+
+maindiv = soup.find("div", {"id": "legend"})
+tot = count - 1
+count = 0
+
+for file  in abs_files:
+	for track in read_gpx_file(file):
+		for i, segment in enumerate(track['segments']):
+			if(count == 0 and tot ==2):
+				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:300px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
+			elif(count == 0 and tot ==3):
+				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:700px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
+			elif(count == 0 and tot ==4):
+				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:900px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
+			else:
+				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "padding-top:5px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))				
+			mydivs = soup.find("div", {"id": "new_ride" + str(count)})
+			
+			total_uphill = round(segment['ele-up'],2)
+			total_downhill = round(segment['ele-down'],2)
+			total_distance = round(segment['distance'][-1]/1000,2)
+			time = segment['delta-seconds'][-1]
+			total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
+			speed = round(total_distance/total_time_seconds,2)
+			mydivs.append(soup.new_tag("button", style = "height: 75px; width: 75px; background: " + str(colour[count%8])))
+			#mydivs.append( str(colour[count%8]) + " --------> " +  str(track['name'][0]))
+			mydivs.append( "  "+ str(track['name'][0]))
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Stats: ")
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Total uphill : " + str(total_uphill) + " m" )
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Total downhill : " + str(total_downhill) + " m")
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Total distance : " + str(total_distance) + " Km" )
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Total time : " + str(floor(time/3600))+ ":" + str(floor((time%3600)/60)) + ":" + str(int(time%60)) )
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append( "Speed : " + str(speed) + " Km/hr")
+			mydivs.append(soup.new_tag('br'))
+			mydivs.append(soup.new_tag('br'))
+	count += 1
+
+
+with open(outsplit2, "w") as file:
+    file.write(str(soup))
+
+
+
+# open custom html only : currently : outsplit
+import webbrowser
+fullpath = os.getcwd()
+newfullpath = os.path.join(fullpath , outsplit2)
+webbrowser.open('file://' + newfullpath)
+
+fp.close()
