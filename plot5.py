@@ -133,7 +133,7 @@ for file  in abs_files:
             newTrack = [startInd , endInd , segment, track['name'][0]]
             rides.append( newTrack )
 
-print( "\n\ncommon segment found in " , len(rides) , " rides" )
+#print( "\n\ncommon segment found in " , len(rides) , " rides" )
 
 finalList = []
 
@@ -155,12 +155,12 @@ for i , newTrack in enumerate(rides):
     eleup = round(ele_diff[np.where(ele_diff > 0)[0]].sum(),3)
     eledown = round(ele_diff[np.where(ele_diff < 0)[0]].sum(),3)
 
-    print("\n\n", i+1,". ", trackName)
-    print( "dist = ", distance , " km" )
-    print( "time = ",  int(time/3600), ":" , int((time%3600)/60) , ":" , int(time%60) )
-    print( "speed = ", speed, " km/hr" )
-    print( "eleup = ", eleup , " m" )
-    print( "eledown = ", -eledown , " m")
+    #print("\n\n", i+1,". ", trackName)
+    #print( "dist = ", distance , " km" )
+    #print( "time = ",  int(time/3600), ":" , int((time%3600)/60) , ":" , int(time%60) )
+    #print( "speed = ", speed, " km/hr" )
+    #print( "eleup = ", eleup , " m" )
+    #print( "eledown = ", -eledown , " m")
     # print(distance, time, speed , eleup , eledown)
     # print( trackName )
 
@@ -198,14 +198,9 @@ count = 0
 for file  in abs_files:
 	for track in read_gpx_file(file):
 		for i, segment in enumerate(track['segments']):
-			if(count == 0 and tot ==2):
-				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:300px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
-			elif(count == 0 and tot ==3):
-				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:700px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
-			elif(count == 0 and tot ==4):
-				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "margin-top:900px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))
-			else:
-				maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "padding-top:5px;padding-left:100px;width:1000px; height:400px; text-align:left; font-size:30px"))				
+			
+			maindiv.append(soup.new_tag("div", id = "new_ride" + str(count), style = "padding-top:5px;padding-left:100px;width:1000px; height:250px; text-align:left; font-size:25px"))				
+			
 			mydivs = soup.find("div", {"id": "new_ride" + str(count)})
 			
 			total_uphill = round(segment['ele-up'],2)
@@ -214,9 +209,12 @@ for file  in abs_files:
 			time = segment['delta-seconds'][-1]
 			total_time_seconds = round(segment['delta-seconds'][-1]/3600,2)
 			speed = round(total_distance/total_time_seconds,2)
-			mydivs.append(soup.new_tag("button", style = "height: 75px; width: 75px; background: " + str(colour[count%8])))
+
+			mydivs.append(soup.new_tag("button", style = "height: 40px; width: 40px; background: " + str(colour[count%8])))
+			
 			#mydivs.append( str(colour[count%8]) + " --------> " +  str(track['name'][0]))
 			mydivs.append( "  "+ str(track['name'][0]))
+			mydivs.append(soup.new_tag('br'))
 			mydivs.append(soup.new_tag('br'))
 			mydivs.append( "Stats: ")
 			mydivs.append(soup.new_tag('br'))
@@ -233,6 +231,41 @@ for file  in abs_files:
 			mydivs.append(soup.new_tag('br'))
 	count += 1
 
+comdiv = soup.find("div", {"id": "common-segment"})
+comhead = soup.find("h2")
+comhead.append("\n\nCommon segment found in " +str(len(rides))+ " rides: ")
+
+for i, lst in enumerate(finalList):
+
+	comdiv.append(soup.new_tag("div", id = "ride" + str(i), style = "padding-top:5px;padding-left:100px;width:1000px; height:250px; text-align:left; font-size:25px"))
+	
+	mydivs = soup.find("div", {"id": "ride" + str(i)})
+
+	mydivs.append(str(i+1)+". "+str(lst[0]))
+
+	mydivs.append(soup.new_tag('br'))
+	mydivs.append(soup.new_tag('br'))
+
+	mydivs.append("Distance = "+str(lst[1]))
+
+	mydivs.append(soup.new_tag('br'))
+
+	mydivs.append("Time = " + str(int(lst[2]/3600))+ ":" + str(int(lst[2]%3600/60)) + ":" + str(int(lst[2]%60)))
+
+	mydivs.append(soup.new_tag('br'))
+
+	mydivs.append("Speed = " + str(lst[3]))
+
+	mydivs.append(soup.new_tag('br'))
+
+	mydivs.append("Elevation up = " + str(lst[4]))
+
+	mydivs.append(soup.new_tag('br'))
+
+	mydivs.append("Elevation down = " + str(lst[5]))
+
+	mydivs.append(soup.new_tag('br'))
+	mydivs.append(soup.new_tag('br'))
 
 with open(outsplit2, "w") as file:
     file.write(str(soup))
