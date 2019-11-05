@@ -262,27 +262,29 @@ comdiv = soup.find("div", {"id": "common-segment"})
 comhead = soup.find("h2")
 comhead.append("\n\n" + str(segCount) + " segments were analysed " )
 
-for segInd in range(0, segCount):
-    finallist = segmentMetricList[segInd]
+for j, finalList in enumerate(segmentMetricList):
 
-    comdiv.append(soup.new_tag("div", id = "segment" + str(segInd), style = "padding-top:5px;padding-left:100px;width:1000px; height:250px; text-align:left; font-size:25px"))
-    segdiv = soup.find( "div", {"id": "segment" + str(segInd)} )
-    divSeg = "seg" + str(segInd) + "_"
+    comdiv.append(soup.new_tag("div", id = "segment" + str(j), style = "padding-top:5px;padding-left:100px;width:1000px; text-align:left; font-size:25px"))
+    comdiv.append(soup.new_tag('br'))
+    segdiv = soup.find( "div", {"id": "segment" + str(j)} )
 
+    divSeg = "seg" + str(j) + "_"
 
-    segdiv.append(soup.new_tag("h2", id = "h2" + str(segInd), style = "padding-top:5px;padding-left:100px;width:1000px; height:250px; text-align:left; font-size:25px"))
-    h2div = soup.find( "h2", {"id": "h2" + str(segInd)} )
-    h2div.append( "\n" + "Segment " + str( segInd + 1 ) + ". \n\t" + "Found in " + str(len( finalList )) + " rides" )
+    segdiv.append(soup.new_tag("h2", id = "heading2" + str(j), style = "padding-top:5px;width:1000px; text-align:left; font-size:25px"))
 
+    h2div = soup.find( "h2", {"id": "heading2" + str(j)} )
+
+    h2div.append( "\n" + "Segment " + str( j + 1 ) + "(Found in " + str(len( finalList )) + " rides):" )
+    comdiv.append(soup.new_tag('br'))
 
     for i, lst in enumerate(finalList):
-        segdiv.append(soup.new_tag("div", id = divSeg + "ride" + str(i), style = "padding-top:5px;padding-left:100px;width:1000px; height:250px; text-align:left; font-size:25px"))
-        
+
+        segdiv.append(soup.new_tag("div", id = divSeg + "ride" + str(i), style = "padding-top:5px;width:1000px; height:200px; text-align:left; font-size:25px"))
+        mydivs.append(soup.new_tag('br'))    
         mydivs = soup.find("div", {"id": divSeg + "ride" + str(i)})
 
         mydivs.append(str(i+1)+". "+str(lst[0]))
 
-        mydivs.append(soup.new_tag('br'))
         mydivs.append(soup.new_tag('br'))
 
         mydivs.append("Distance = "+str(lst[1]))
