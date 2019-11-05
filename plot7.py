@@ -320,8 +320,12 @@ for j, finalList in enumerate(segmentMetricList):
 
         mydivs.append("Elevation down = " + str(lst[5])+" m")
 
-        mydivs.append(soup.new_tag('br'))
-        mydivs.append(soup.new_tag('br'))
+
+    segdiv.append(soup.new_tag("img", src = "seg"+str(j)+".png"))
+
+    segdiv.append(soup.new_tag('br'))
+    
+    segdiv.append(soup.new_tag('br'))
 
 
 with open(outsplit2, "w") as file:
