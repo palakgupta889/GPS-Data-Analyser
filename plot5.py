@@ -246,7 +246,7 @@ for i, lst in enumerate(finalList):
 	mydivs.append(soup.new_tag('br'))
 	mydivs.append(soup.new_tag('br'))
 
-	mydivs.append("Distance = "+str(lst[1]))
+	mydivs.append("Distance = "+str(lst[1])+" Km")
 
 	mydivs.append(soup.new_tag('br'))
 
@@ -254,15 +254,15 @@ for i, lst in enumerate(finalList):
 
 	mydivs.append(soup.new_tag('br'))
 
-	mydivs.append("Speed = " + str(lst[3]))
+	mydivs.append("Speed = " + str(lst[3])+" Km/hr")
 
 	mydivs.append(soup.new_tag('br'))
 
-	mydivs.append("Elevation up = " + str(lst[4]))
+	mydivs.append("Elevation up = " + str(lst[4])+" m")
 
 	mydivs.append(soup.new_tag('br'))
 
-	mydivs.append("Elevation down = " + str(lst[5]))
+	mydivs.append("Elevation down = " + str(lst[5])+" m")
 
 	mydivs.append(soup.new_tag('br'))
 	mydivs.append(soup.new_tag('br'))
