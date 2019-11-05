@@ -174,6 +174,21 @@ for segInd in range(0, segCount):
 
     segmentMetricList.append( finalList )
 
+#saving graphs
+for segInd, finalList in enumerate(segmentMetricList):
+    tracksNames = [ x[0] for x in  finalList ]
+    speed = [ x[3] for x in  finalList ]
+    time = [ x[2] for x in  finalList ]
+    index = np.arange(len(tracksNames))
+    plt.bar(index, speed)
+    plt.xlabel('Track Names', fontsize=10)
+    plt.ylabel('Speed (Km/Hr)', fontsize=10)
+    plt.xticks(index, tracksNames, fontsize=5, rotation=30)
+    plt.title('Speed for segment ' +str(segInd))
+    plotName = "seg" + str(segInd) + ".png"
+    plt.savefig(plotName)
+
+
 
 ########## READ GPX ############
 
@@ -287,7 +302,7 @@ for j, finalList in enumerate(segmentMetricList):
 
         mydivs.append(soup.new_tag('br'))
 
-        mydivs.append("Distance = "+str(lst[1]))
+        mydivs.append("Distance = "+str(lst[1])+" Km")
 
         mydivs.append(soup.new_tag('br'))
 
@@ -295,15 +310,15 @@ for j, finalList in enumerate(segmentMetricList):
 
         mydivs.append(soup.new_tag('br'))
 
-        mydivs.append("Speed = " + str(lst[3]))
+        mydivs.append("Speed = " + str(lst[3])+" Km/hr")
 
         mydivs.append(soup.new_tag('br'))
 
-        mydivs.append("Elevation up = " + str(lst[4]))
+        mydivs.append("Elevation up = " + str(lst[4])+" m")
 
         mydivs.append(soup.new_tag('br'))
 
-        mydivs.append("Elevation down = " + str(lst[5]))
+        mydivs.append("Elevation down = " + str(lst[5])+" m")
 
         mydivs.append(soup.new_tag('br'))
         mydivs.append(soup.new_tag('br'))
