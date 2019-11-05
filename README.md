@@ -1,6 +1,6 @@
 # GPS-Data-Analyser
 
-This is a software which uses GPS data from a gpx file, plots it on an interactive map and analyses it for various metrics realting to fitness activities like running and biking such as speed, elevation gain, performance progress etc.
+This is a software which uses GPS data from a gpx file, plots it on an interactive map and analyses it for various metrics relating to fitness activities like running and biking such as speed, elevation gain, performance progress etc.
 
 ## Getting Started
 
@@ -18,19 +18,19 @@ Install the following python packages:
 pip install mplleaflet
 pip install numpy
 pip install matplotlib
+pip install bs4
 ```
 
 ## Running the tests
 
 The gps_Data and input directories contain sample input gpx files that contain GPS Data.
 
-plot2.py contains the script to plot the gpx data on an interactive map.
+plot5.py contains the script to plot the gpx data on an interactive map on left of the HTML page and statistics for all the plotted rides on the right side along with the common segment statistics whose coordinates are given by the user through a file.
 ```
-python3 plot2.py directory mapname
+python3 plot5.py <path to input directory> <path to coordinates file for common segment> <path to output file>
 ```
-where directory is the input directory name and mapname is the name of the output map.
 
-After running the above command, an html file containing the output map will automatically open in your web browser. A text file containing the legend for the map, regarding which color indicates which trip, is also created. 
+After running the above command, an html file containing the output map and all the statistics will automatically open in your web browser. 
 
 ## Authors
 
