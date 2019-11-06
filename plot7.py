@@ -25,12 +25,15 @@ direc  = arguments[0]
 infile = arguments[1]
 out    = arguments[2]
 
+# os.system("python -W  test.py")
+# sys.exit(0)
+
 outhtml = out + "_map.html";
 outlegend = out + "_legend.txt"
 outsplit = out + "_split.html"
 outsplit2 = out + "_split2.html"
 
-distance = 0.005  ####bounding box distance
+distance = 0.015  ####bounding box distance
 
 fp = open( infile ,"r")
 
@@ -174,21 +177,6 @@ for segInd in range(0, segCount):
 
     segmentMetricList.append( finalList )
 
-#saving graphs
-for segInd, finalList in enumerate(segmentMetricList):
-    tracksNames = [ x[0] for x in  finalList ]
-    speed = [ x[3] for x in  finalList ]
-    time = [ x[2] for x in  finalList ]
-    index = np.arange(len(tracksNames))
-    plt.bar(index, speed)
-    plt.xlabel('Track Names', fontsize=10)
-    plt.ylabel('Speed (Km/Hr)', fontsize=10)
-    plt.xticks(index, tracksNames, fontsize=5, rotation=30)
-    plt.title('Speed for segment ' +str(segInd))
-    plotName = "seg" + str(segInd) + ".png"
-    plt.savefig(plotName)
-
-
 
 ########## READ GPX ############
 
@@ -201,14 +189,37 @@ for file  in abs_files:
 save_map(fig, outhtml)
 #file_out.close()
 
+
+
+#saving graphs
+for segInd, finalList in enumerate(segmentMetricList):
+    tracksNames = [ x[0] for x in  finalList ]
+    speed = [ x[3] for x in  finalList ]
+    time = [ x[2] for x in  finalList ]
+    index = np.arange(len(tracksNames))
+    # fig = plt.figure()
+    plt.bar(index, speed)
+    plt.xlabel('Track Names', fontsize=10)
+    plt.ylabel('Speed (Km/Hr)', fontsize=10)
+    plt.xticks(index, tracksNames, fontsize=5, rotation=30)
+    plt.title('Speed for segment ' +str(segInd+1))
+    plotName = out + "seg" + str(segInd) + ".png"
+    plt.savefig(plotName)
+
+
+
+
 ########## Partial GPX Plot done ######
 
 #copying template split html
 if path.isfile(outsplit):
     os.system( "rm " + outsplit )
 
-if path.isfile("map.js"):
-    os.system( "rm map.js ")
+
+mapName  = "map"+ out + ".js"
+
+if path.isfile(mapName):
+    os.system( "rm " + mapName)
 
 os.system( "cp ./template/split.html " + outsplit )
 
@@ -220,10 +231,10 @@ for i, line in enumerate(fp):
         break
 fp.close()
 
-
 ########## Copying map to half map
 
-os.system("awk 'NR>=13 && NR<=37' " + outhtml + " > map.js" )
+os.system("awk 'NR>=13 && NR<=37' " + outhtml + " > " + mapName )
+os.system("sed -i 's/map.js/"+mapName+"/g' " + outsplit )
 os.system("sed -i 's/newmapvalue/"+mapid+"/g' " + outsplit )
 
 #
@@ -321,7 +332,7 @@ for j, finalList in enumerate(segmentMetricList):
         mydivs.append("Elevation down = " + str(lst[5])+" m")
 
 
-    segdiv.append(soup.new_tag("img", src = "seg"+str(j)+".png"))
+    segdiv.append(soup.new_tag("img", src = out + "seg"+str(j)+".png"))
 
     segdiv.append(soup.new_tag('br'))
     
